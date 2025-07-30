@@ -68,12 +68,10 @@ export const AuthProvider: React.FC<AuthProviderProps> = ({ children }) => {
     );
     const user = userCredential.user;
 
-    // Update the user's display name
     if (displayName && user) {
       await updateProfile(user, { displayName });
     }
 
-    // Create user profile in Firestore
     await createUserProfile(user.uid, email, displayName, userType);
 
     return user;
@@ -97,7 +95,6 @@ export const AuthProvider: React.FC<AuthProviderProps> = ({ children }) => {
     const unsubscribe = onAuthStateChanged(auth, async (user) => {
       setCurrentUser(user);
 
-      // Load user profile from Firestore if user exists
       if (user) {
         try {
           const profile = await getUserProfile(user.uid);

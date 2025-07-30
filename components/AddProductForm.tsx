@@ -30,10 +30,8 @@ export default function AddProductForm() {
     e.preventDefault()
     setIsSubmitting(true)
 
-    // Simulate API call
     await new Promise((resolve) => setTimeout(resolve, 1000))
 
-    // In a real app, you would submit to your API here
     console.log("Product data:", formData)
 
     setIsSubmitting(false)

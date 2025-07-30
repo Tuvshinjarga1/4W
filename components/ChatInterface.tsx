@@ -57,7 +57,7 @@ export default function ChatInterface({ productId }: ChatInterfaceProps) {
     const message: Message = {
       id: Date.now().toString(),
       text: newMessage,
-      sender: "buyer", // In a real app, this would be determined by the current user
+      sender: "buyer",
       timestamp: new Date(),
     }
 
