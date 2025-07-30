@@ -19,7 +19,7 @@ export default function ProductGrid({ products }: ProductGridProps) {
   }
 
   return (
-    <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-4">
+    <div className="grid grid-flow-col auto-cols-[80%] sm:auto-cols-[40%] lg:auto-cols-[30%] gap-4 overflow-x-auto scrollbar-thin scrollbar-thumb-neutral-300 px-1">
       {products.map((product) => (
         <ProductCard key={product.id} product={product} />
       ))}
