@@ -194,7 +194,7 @@ export const LoginForm: React.FC<LoginFormProps> = ({ onSuccess }) => {
                     />
                   </div>
                   <div className="space-y-2">
-                    <Label>Би хүсэж байна...</Label>
+                    <Label>Төрөл</Label>
                     <Select
                       value={userType}
                       onValueChange={(value: "giver" | "receiver") =>
@@ -208,13 +208,19 @@ export const LoginForm: React.FC<LoginFormProps> = ({ onSuccess }) => {
                         <SelectItem value="receiver">
                           <div className="flex items-center space-x-2">
                             <Users className="w-4 h-4" />
-                            <span>Хоол олох (Хүлээн авагч)</span>
+                            <span>Хэрэглэгч (Хүлээн авагч)</span>
                           </div>
                         </SelectItem>
                         <SelectItem value="giver">
                           <div className="flex items-center space-x-2">
                             <Gift className="w-4 h-4" />
-                            <span>Хоол хуваалцах (Өгөгч)</span>
+                            <span>Байгууллага</span>
+                          </div>
+                        </SelectItem>
+                        <SelectItem value="giver">
+                          <div className="flex items-center space-x-2">
+                            <Gift className="w-4 h-4" />
+                            <span>Хэрэглэгч (Өгөгч)</span>
                           </div>
                         </SelectItem>
                       </SelectContent>
