@@ -1,6 +1,6 @@
 "use client";
 
-import { useState } from "react";
+import { useState, useEffect } from "react";
 import {
   Filter,
   Calendar,
@@ -12,8 +12,17 @@ import {
 import { Button } from "@/components/ui/button";
 import { Badge } from "@/components/ui/badge";
 import { Input } from "@/components/ui/input";
+import type { Product } from "@/lib/types";
 
-export default function FilterBar() {
+interface FilterBarProps {
+  products: Product[];
+  onFilterChange: (filteredProducts: Product[]) => void;
+}
+
+export default function FilterBar({
+  products,
+  onFilterChange,
+}: FilterBarProps) {
   const [activeFilters, setActiveFilters] = useState<string[]>([]);
   const [locationFilter, setLocationFilter] = useState("");
   const [isLoadingGPS, setIsLoadingGPS] = useState(false);
@@ -22,12 +31,69 @@ export default function FilterBar() {
     lng: number;
   } | null>(null);
 
-  const categories = ["Жимс", "Ногоо", "Сүүн бүтээгдэхүүн", "Мах", "Бусад"];
+  const categories = [
+    "Жимс",
+    "Ногоо",
+    "Сүүн бүтээгдэхүүн",
+    "Талх",
+    "Мах",
+    "Бусад",
+  ];
   const urgencyLevels = [
     "Өнөөдөр дуусна",
     "1-3 хоногт дуусна",
     "1 долоо хоног+ дуусна",
   ];
+
+  // Шүүлтүүр ашиглан бүтээгдэхүүнүүдийг шүүх
+  const filterProducts = () => {
+    let filteredProducts = [...products];
+
+    // Ангилал болон яаралтай байдлын шүүлтүүр
+    if (activeFilters.length > 0) {
+      filteredProducts = filteredProducts.filter((product) => {
+        // Ангилал шүүлтүүр
+        const categoryMatch =
+          categories.includes(product.category) &&
+          activeFilters.includes(product.category);
+
+        // Яаралтай байдлын шүүлтүүр
+        const expiryDate = new Date(product.expiryDate);
+        const today = new Date();
+        const daysUntilExpiry = Math.ceil(
+          (expiryDate.getTime() - today.getTime()) / (1000 * 60 * 60 * 24)
+        );
+
+        let urgencyMatch = false;
+        if (activeFilters.includes("Өнөөдөр дуусна")) {
+          urgencyMatch = urgencyMatch || daysUntilExpiry <= 0;
+        }
+        if (activeFilters.includes("1-3 хоногт дуусна")) {
+          urgencyMatch =
+            urgencyMatch || (daysUntilExpiry > 0 && daysUntilExpiry <= 3);
+        }
+        if (activeFilters.includes("1 долоо хоног+ дуусна")) {
+          urgencyMatch = urgencyMatch || daysUntilExpiry > 3;
+        }
+
+        return categoryMatch || urgencyMatch;
+      });
+    }
+
+    // Байршлын шүүлтүүр
+    if (locationFilter.trim()) {
+      filteredProducts = filteredProducts.filter((product) =>
+        product.location.toLowerCase().includes(locationFilter.toLowerCase())
+      );
+    }
+
+    onFilterChange(filteredProducts);
+  };
+
+  // Шүүлтүүр өөрчлөгдөх үед автоматаар шүүх
+  useEffect(() => {
+    filterProducts();
+  }, [activeFilters, locationFilter, products]);
 
   const toggleFilter = (filter: string) => {
     setActiveFilters((prev) =>
@@ -77,11 +143,21 @@ export default function FilterBar() {
     }
   };
 
+  const clearAllFilters = () => {
+    setActiveFilters([]);
+    clearLocationFilter();
+  };
+
   return (
     <div className="mb-6">
       <div className="flex items-center gap-2 mb-3">
         <Filter className="w-4 h-4 text-neutral-600" />
         <span className="text-sm font-medium text-neutral-700">Шүүлтүүр</span>
+        {(activeFilters.length > 0 || locationFilter) && (
+          <Badge variant="secondary" className="text-xs">
+            {activeFilters.length + (locationFilter ? 1 : 0)} идэвхтэй
+          </Badge>
+        )}
       </div>
 
       <div className="space-y-3">
@@ -196,10 +272,7 @@ export default function FilterBar() {
           <Button
             variant="ghost"
             size="sm"
-            onClick={() => {
-              setActiveFilters([]);
-              clearLocationFilter();
-            }}
+            onClick={clearAllFilters}
             className="text-xs text-neutral-600 hover:text-neutral-800"
           >
             Бүх шүүлтүүрийг арилгах

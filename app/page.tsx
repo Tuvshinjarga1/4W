@@ -1,67 +1,73 @@
-import { Suspense } from "react";
+"use client";
+
+import { useState, useEffect } from "react";
 import Header from "@/components/Header";
 import ProductGrid from "@/components/ProductGrid";
 import FilterBar from "@/components/FilterBar";
 import { getProducts } from "@/lib/data";
+import type { Product } from "@/lib/types";
 
-export default async function HomePage() {
-  try {
-    const rawProducts = await getProducts();
-    console.log("Raw products from Firebase:", rawProducts);
+export default function HomePage() {
+  const [allProducts, setAllProducts] = useState<Product[]>([]);
+  const [filteredProducts, setFilteredProducts] = useState<Product[]>([]);
+  const [loading, setLoading] = useState(true);
+  const [error, setError] = useState<string | null>(null);
 
-    const products = rawProducts.map((product: any) => ({
-      ...product,
-      seller: product["seller "] ?? product.seller,
-      expiryDate: new Date(product.expiryDate?.seconds * 1000),
-      title: product.title?.replace(/^"|"$/g, "").trim(),
-    }));
+  useEffect(() => {
+    const fetchProducts = async () => {
+      try {
+        setLoading(true);
+        const rawProducts = await getProducts();
+        console.log("Raw products from Firebase:", rawProducts);
 
-    console.log("Processed products:", products);
-    console.log("Number of products:", products.length);
+        const products = rawProducts.map((product: any) => ({
+          ...product,
+          seller: product["seller "] ?? product.seller,
+          expiryDate: new Date(product.expiryDate?.seconds * 1000),
+          title: product.title?.replace(/^"|"$/g, "").trim(),
+        }));
 
+        console.log("Processed products:", products);
+        console.log("Number of products:", products.length);
+
+        setAllProducts(products);
+        setFilteredProducts(products);
+      } catch (err) {
+        console.error("Error fetching products:", err);
+        setError("Бүтээгдэхүүн уншихад алдаа гарлаа");
+      } finally {
+        setLoading(false);
+      }
+    };
+
+    fetchProducts();
+  }, []);
+
+  const handleFilterChange = (filtered: Product[]) => {
+    setFilteredProducts(filtered);
+  };
+
+  if (loading) {
     return (
       <div className="min-h-screen bg-neutral-50">
         <Header />
         <main className="container mx-auto px-3 sm:px-4 py-4 sm:py-6 max-w-7xl">
-          <div className="mb-4 sm:mb-6">
-            <h1 className="text-xl sm:text-2xl font-bold text-neutral-800 mb-2">
-              Боломжтой бүтээгдэхүүн
-            </h1>
-            <p className="text-neutral-600 text-sm">
-              Танай орон нутагт хүнсний хог хаягдлыг бууруулахад туслаарай
-            </p>
-            {products.length > 0 && (
-              <p className="text-xs text-neutral-500 mt-1">
-                Нийт {products.length} бүтээгдэхүүн олдлоо
-              </p>
-            )}
+          <div className="flex items-center justify-center py-12">
+            <div className="text-center">
+              <div className="animate-spin rounded-full h-8 w-8 border-b-2 border-green-600 mx-auto mb-2"></div>
+              <p className="text-neutral-600">Уншиж байна...</p>
+            </div>
           </div>
-
-          <FilterBar />
-
-          <Suspense fallback={<ProductGridSkeleton />}>
-            <ProductGrid products={products} />
-          </Suspense>
         </main>
       </div>
     );
-  } catch (error) {
-    console.error("Error fetching products:", error);
+  }
+
+  if (error) {
     return (
       <div className="min-h-screen bg-neutral-50">
         <Header />
         <main className="container mx-auto px-3 sm:px-4 py-4 sm:py-6 max-w-7xl">
-          <div className="mb-4 sm:mb-6">
-            <h1 className="text-xl sm:text-2xl font-bold text-neutral-800 mb-2">
-              Боломжтой бүтээгдэхүүн
-            </h1>
-            <p className="text-neutral-600 text-sm">
-              Танай орон нутагт хүнсний хог хаягдлыг бууруулахад туслаарай
-            </p>
-          </div>
-
-          <FilterBar />
-
           <div className="text-center py-8 sm:py-12">
             <div className="w-12 h-12 sm:w-16 sm:h-16 bg-red-100 rounded-full flex items-center justify-center mx-auto mb-4">
               <span className="text-xl sm:text-2xl">⚠️</span>
@@ -69,12 +75,10 @@ export default async function HomePage() {
             <h3 className="text-base sm:text-lg font-medium text-neutral-800 mb-2">
               Алдаа гарлаа
             </h3>
-            <p className="text-neutral-600 text-sm">
-              Бүтээгдэхүүн уншихад алдаа гарлаа. Дахин оролдоно уу.
-            </p>
+            <p className="text-neutral-600 text-sm mb-4">{error}</p>
             <button
               onClick={() => window.location.reload()}
-              className="mt-4 px-4 py-2 bg-green-600 text-white rounded-lg hover:bg-green-700"
+              className="px-4 py-2 bg-green-600 text-white rounded-lg hover:bg-green-700"
             >
               Дахин оролдох
             </button>
@@ -83,21 +87,34 @@ export default async function HomePage() {
       </div>
     );
   }
-}
 
-function ProductGridSkeleton() {
   return (
-    <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-3 sm:gap-4">
-      {[...Array(6)].map((_, i) => (
-        <div
-          key={i}
-          className="bg-white rounded-lg p-3 sm:p-4 shadow-sm animate-pulse"
-        >
-          <div className="w-full h-32 sm:h-48 bg-neutral-200 rounded-lg mb-3"></div>
-          <div className="h-4 bg-neutral-200 rounded mb-2"></div>
-          <div className="h-3 bg-neutral-200 rounded w-2/3"></div>
+    <div className="min-h-screen bg-neutral-50">
+      <Header />
+      <main className="container mx-auto px-3 sm:px-4 py-4 sm:py-6 max-w-7xl">
+        <div className="mb-4 sm:mb-6">
+          <h1 className="text-xl sm:text-2xl font-bold text-neutral-800 mb-2">
+            Боломжтой бүтээгдэхүүн
+          </h1>
+          <p className="text-neutral-600 text-sm">
+            Танай орон нутагт хүнсний хог хаягдлыг бууруулахад туслаарай
+          </p>
+          {allProducts.length > 0 && (
+            <p className="text-xs text-neutral-500 mt-1">
+              Нийт {allProducts.length} бүтээгдэхүүн олдлоо
+              {filteredProducts.length !== allProducts.length && (
+                <span className="ml-2">
+                  (Шүүлтүүрээр {filteredProducts.length} харуулж байна)
+                </span>
+              )}
+            </p>
+          )}
         </div>
-      ))}
+
+        <FilterBar products={allProducts} onFilterChange={handleFilterChange} />
+
+        <ProductGrid products={filteredProducts} />
+      </main>
     </div>
   );
 }
