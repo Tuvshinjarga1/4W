@@ -64,26 +64,6 @@
 
 🌐 **Live Demo**: https://4-w.vercel.app/
 
-## 📱 Скриншотууд
-
-### Үндсэн хуудас
-
-![Үндсэн хуудас](./screenshots/homepage.png)
-
-### Бүтээгдэхүүний дэлгэрэнгүй
-
-![Бүтээгдэхүүний хуудас](./screenshots/product-detail.png)
-
-### Чат интерфейс
-
-![Чат](./screenshots/chat-interface.png)
-
-### GPS функционал
-
-![GPS функционал](./screenshots/gps-feature.png)
-
-## 🗺️ GPS болон байршлын функционал
-
 ### 📍 GPS хайлт
 
 - **FilterBar** дээр GPS товч дарж одоогийн байршил авах
@@ -137,21 +117,6 @@ npm run dev
 
 Аппликэйшн [http://localhost:3000](http://localhost:3000) хаяг дээр ажиллана.
 
-### Environment Variables
-
-```env
-# Firebase Config
-NEXT_PUBLIC_FIREBASE_API_KEY=your_api_key
-NEXT_PUBLIC_FIREBASE_AUTH_DOMAIN=your_auth_domain
-NEXT_PUBLIC_FIREBASE_PROJECT_ID=your_project_id
-NEXT_PUBLIC_FIREBASE_STORAGE_BUCKET=your_storage_bucket
-NEXT_PUBLIC_FIREBASE_MESSAGING_SENDER_ID=your_sender_id
-NEXT_PUBLIC_FIREBASE_APP_ID=your_app_id
-
-# ImgBB API (зураг хадгалах)
-NEXT_PUBLIC_IMGBB_API_KEY=your_imgbb_api_key
-```
-
 ## 🗂️ Файлын бүтэц
 
 ```
@@ -200,25 +165,4 @@ NEXT_PUBLIC_IMGBB_API_KEY=your_imgbb_api_key
 4. Branch-ээ push хийх (`git push origin feature/AmazingFeature`)
 5. Pull Request нээх
 
-## 📄 Лиценз
-
-Энэ төсөл MIT лицензтэй. Дэлгэрэнгүйг `LICENSE` файлаас үзнэ үү.
-
-## 📞 Холбоо барих
-
-- **GitHub**: [https://github.com/Tuvshinjarga1](https://github.com/Tuvshinjarga1)
-- **Email**: tuvshinjarga1@gmail.com
-- **LinkedIn**: [Э.Түвшинжаргал](https://linkedin.com/in/tuvshinjarga)
-
-## 🙏 Талархал
-
-- **OpenStreetMap** - Газрын зургийн өгөгдөл
-- **Leaflet** - Интерактив газрын зураг
-- **Firebase** - Backend үйлчилгээ
-- **Vercel** - Deployment платформ
-
----
-
 **💚 Хамтдаа хүнсний хог хаягдлыг бууруулж, илүү тогтвортой ирээдүй бүтээцгээе!**
-
-**📍 GPS функционалтай, байршил дээр суурилсан хүнсний хуваалцах платформ**
