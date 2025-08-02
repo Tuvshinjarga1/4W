@@ -122,6 +122,11 @@ export default function AddProductForm() {
         updatedAt: new Date(),
       };
 
+      // Log coordinates for debugging
+      console.log("Form data:", formData);
+      console.log("Coordinates being saved:", formData.coordinates);
+      console.log("Product data to be saved:", productData);
+
       // Add product to Firebase
       await addProduct(productData);
 
@@ -145,6 +150,10 @@ export default function AddProductForm() {
     location: string,
     coordinates?: { lat: number; lng: number }
   ) => {
+    console.log("AddProductForm - Location changed:", {
+      location,
+      coordinates,
+    });
     setFormData((prev) => ({
       ...prev,
       location,
@@ -253,6 +262,20 @@ export default function AddProductForm() {
             value={formData.location}
             onChange={handleLocationChange}
           />
+
+          {/* Координат мэдээлэл харуулах */}
+          {formData.coordinates && (
+            <div className="p-3 bg-green-50 rounded-lg border border-green-200">
+              <div className="flex items-center gap-2 text-sm text-green-700">
+                <span>📍</span>
+                <span>Координат хадгалагдана:</span>
+              </div>
+              <div className="text-xs text-green-600 mt-1">
+                {formData.coordinates.lat.toFixed(6)},{" "}
+                {formData.coordinates.lng.toFixed(6)}
+              </div>
+            </div>
+          )}
 
           <div>
             <Label className="flex items-center gap-2 text-sm font-medium text-neutral-700 mb-2">

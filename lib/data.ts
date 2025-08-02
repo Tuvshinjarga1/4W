@@ -21,6 +21,10 @@ export async function addProduct(productData: any): Promise<string> {
     throw new Error("Хэрэглэгч нэвтрээгүй байна");
   }
 
+  // Log coordinates for debugging
+  console.log("addProduct - Received productData:", productData);
+  console.log("addProduct - Coordinates:", productData.coordinates);
+
   const productWithSeller = {
     ...productData,
     seller: {
@@ -31,7 +35,10 @@ export async function addProduct(productData: any): Promise<string> {
     updatedAt: new Date(),
   };
 
+  console.log("addProduct - Final data to save:", productWithSeller);
+
   const docRef = await addDoc(collection(db, "products"), productWithSeller);
+  console.log("addProduct - Document saved with ID:", docRef.id);
   return docRef.id;
 }
 
@@ -41,6 +48,11 @@ export async function getProducts(): Promise<ProductWithChat[]> {
 
   for (const docSnap of productsSnapshot.docs) {
     const data = docSnap.data();
+
+    // Log raw data for debugging
+    console.log("getProducts - Raw data for product:", docSnap.id, data);
+    console.log("getProducts - Raw coordinates:", data.coordinates);
+
     const product: Product = {
       id: docSnap.id,
       title: data.title?.replace(/^"|"$/g, "").trim() ?? "",
@@ -55,7 +67,11 @@ export async function getProducts(): Promise<ProductWithChat[]> {
       expiryDate: data.expiryDate?.toDate?.() || new Date(),
       seller: data["seller "] ??
         data.seller ?? { id: "", name: "Unknown Seller" },
+      coordinates: data.coordinates || null,
     };
+
+    console.log("getProducts - Processed product:", product);
+    console.log("getProducts - Processed coordinates:", product.coordinates);
 
     const chatQuery = query(
       collection(db, "chats"),
@@ -102,6 +118,7 @@ export async function getProductById(
     expiryDate: data.expiryDate?.toDate?.() || new Date(),
     seller: data["seller "] ??
       data.seller ?? { id: "", name: "Unknown Seller" },
+    coordinates: data.coordinates || null,
   };
 
   const chatQuery = query(

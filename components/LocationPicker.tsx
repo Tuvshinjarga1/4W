@@ -1,7 +1,7 @@
 "use client";
 
 import { useState, useRef, useEffect } from "react";
-import { MapPin, Search, X, Navigation, Crosshair } from "lucide-react";
+import { MapPin, Search, X, Crosshair, Navigation } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
@@ -46,6 +46,34 @@ const UB_DISTRICTS = [
 // Улаанбаатарын төв координат
 const UB_CENTER = { lat: 47.9186, lng: 106.9177 };
 
+// Map click handler component
+function MapClickHandler({
+  onLocationSelect,
+}: {
+  onLocationSelect: (lat: number, lng: number) => void;
+}) {
+  const [map, setMap] = useState<any>(null);
+
+  useEffect(() => {
+    if (typeof window !== "undefined") {
+      import("react-leaflet").then(({ useMapEvents }) => {
+        const MapClickHandlerInner = () => {
+          const map = useMapEvents({
+            click: (e) => {
+              const { lat, lng } = e.latlng;
+              onLocationSelect(lat, lng);
+            },
+          });
+          return null;
+        };
+        setMap(<MapClickHandlerInner />);
+      });
+    }
+  }, [onLocationSelect]);
+
+  return map;
+}
+
 // Map component with GPS functionality
 function MapWithGPS({
   onLocationSelect,
@@ -57,6 +85,10 @@ function MapWithGPS({
     null
   );
   const [isLoadingGPS, setIsLoadingGPS] = useState(false);
+  const [selectedCoordinates, setSelectedCoordinates] = useState<{
+    lat: number;
+    lng: number;
+  } | null>(null);
 
   const getCurrentLocation = () => {
     setIsLoadingGPS(true);
@@ -66,6 +98,7 @@ function MapWithGPS({
           const { latitude, longitude } = position.coords;
           setPosition([latitude, longitude]);
           setMarkerPosition([latitude, longitude]);
+          setSelectedCoordinates({ lat: latitude, lng: longitude });
           onLocationSelect(latitude, longitude);
           setIsLoadingGPS(false);
         },
@@ -86,6 +119,20 @@ function MapWithGPS({
     }
   };
 
+  const handleLocationSelect = (lat: number, lng: number) => {
+    setMarkerPosition([lat, lng]);
+    setSelectedCoordinates({ lat, lng });
+    onLocationSelect(lat, lng);
+  };
+
+  const navigateToLocation = () => {
+    if (selectedCoordinates) {
+      const { lat, lng } = selectedCoordinates;
+      const url = `https://www.google.com/maps?q=${lat},${lng}`;
+      window.open(url, "_blank");
+    }
+  };
+
   return (
     <div className="relative">
       <div className="absolute top-2 right-2 z-[1000] flex gap-2">
@@ -99,6 +146,17 @@ function MapWithGPS({
           <Crosshair className="w-4 h-4 mr-1" />
           {isLoadingGPS ? "Хайж байна..." : "GPS"}
         </Button>
+        {selectedCoordinates && (
+          <Button
+            type="button"
+            size="sm"
+            onClick={navigateToLocation}
+            className="bg-blue-600 hover:bg-blue-700 text-white"
+          >
+            <Navigation className="w-4 h-4 mr-1" />
+            Зам
+          </Button>
+        )}
       </div>
 
       <MapContainer
@@ -110,6 +168,7 @@ function MapWithGPS({
           attribution='&copy; <a href="https://www.openstreetmap.org/copyright">OpenStreetMap</a> contributors'
           url="https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png"
         />
+        <MapClickHandler onLocationSelect={handleLocationSelect} />
         {markerPosition && (
           <Marker position={markerPosition}>
             <div className="text-red-500 text-2xl">📍</div>
@@ -120,6 +179,13 @@ function MapWithGPS({
       <div className="mt-2 text-xs text-neutral-600 text-center">
         💡 Газрын зураг дээр дарж байршил сонгох боломжтой
       </div>
+
+      {selectedCoordinates && (
+        <div className="mt-2 p-2 bg-green-50 rounded text-xs text-green-700">
+          📍 Сонгосон координат: {selectedCoordinates.lat.toFixed(6)},{" "}
+          {selectedCoordinates.lng.toFixed(6)}
+        </div>
+      )}
     </div>
   );
 }
@@ -129,24 +195,11 @@ export default function LocationPicker({
   onChange,
 }: LocationPickerProps) {
   const [showMap, setShowMap] = useState(false);
-  const [showList, setShowList] = useState(false);
-  const [searchTerm, setSearchTerm] = useState("");
   const [selectedLocation, setSelectedLocation] = useState(value);
   const [coordinates, setCoordinates] = useState<{
     lat: number;
     lng: number;
   } | null>(null);
-
-  const filteredDistricts = UB_DISTRICTS.filter((district) =>
-    district.name.toLowerCase().includes(searchTerm.toLowerCase())
-  );
-
-  const handleLocationSelect = (district: (typeof UB_DISTRICTS)[0]) => {
-    setSelectedLocation(district.name);
-    setCoordinates({ lat: district.lat, lng: district.lng });
-    onChange(district.name, { lat: district.lat, lng: district.lng });
-    setShowList(false);
-  };
 
   const handleMapLocationSelect = (lat: number, lng: number) => {
     // Reverse geocoding - find nearest district
@@ -165,11 +218,19 @@ export default function LocationPicker({
 
     setSelectedLocation(nearestDistrict.name);
     setCoordinates({ lat, lng });
+
+    // Log coordinates for debugging
+    console.log("LocationPicker - Coordinates selected:", { lat, lng });
+    console.log("LocationPicker - Nearest district:", nearestDistrict.name);
+
     onChange(nearestDistrict.name, { lat, lng });
   };
 
   const handleManualInput = (inputValue: string) => {
     setSelectedLocation(inputValue);
+    // Clear coordinates when manually typing location
+    setCoordinates(null);
+    console.log("LocationPicker - Manual input, clearing coordinates");
     onChange(inputValue);
   };
 
@@ -188,34 +249,16 @@ export default function LocationPicker({
             onChange={(e) => handleManualInput(e.target.value)}
             required
           />
-          <div className="flex gap-1">
-            <Button
-              type="button"
-              variant="outline"
-              size="sm"
-              onClick={() => {
-                setShowMap(!showMap);
-                setShowList(false);
-              }}
-              className="flex items-center gap-1"
-            >
-              <MapPin className="w-4 h-4" />
-              {showMap ? "Хаах" : "Газрын зураг"}
-            </Button>
-            <Button
-              type="button"
-              variant="outline"
-              size="sm"
-              onClick={() => {
-                setShowList(!showList);
-                setShowMap(false);
-              }}
-              className="flex items-center gap-1"
-            >
-              <Navigation className="w-4 h-4" />
-              Жагсаалт
-            </Button>
-          </div>
+          <Button
+            type="button"
+            variant="outline"
+            size="sm"
+            onClick={() => setShowMap(!showMap)}
+            className="flex items-center gap-1"
+          >
+            <MapPin className="w-4 h-4" />
+            {showMap ? "Хаах" : "Газрын зураг"}
+          </Button>
         </div>
 
         {coordinates && (
@@ -246,64 +289,6 @@ export default function LocationPicker({
             <div className="mt-3 p-3 bg-neutral-50 rounded text-xs text-neutral-600">
               💡 Зөвлөгөө: GPS товч дарж одоогийн байршил авах эсвэл газрын
               зураг дээр дарж байршил сонгох
-            </div>
-          </div>
-        )}
-
-        {showList && (
-          <div className="border border-neutral-200 rounded-lg p-4 bg-white">
-            <div className="flex items-center justify-between mb-3">
-              <h3 className="font-medium text-neutral-800">Байршил сонгох</h3>
-              <Button
-                type="button"
-                variant="ghost"
-                size="sm"
-                onClick={() => setShowList(false)}
-              >
-                <X className="w-4 h-4" />
-              </Button>
-            </div>
-
-            <div className="mb-3">
-              <div className="relative">
-                <Search className="w-4 h-4 absolute left-3 top-1/2 transform -translate-y-1/2 text-neutral-400" />
-                <Input
-                  placeholder="Байршил хайх..."
-                  value={searchTerm}
-                  onChange={(e) => setSearchTerm(e.target.value)}
-                  className="pl-10"
-                />
-              </div>
-            </div>
-
-            <div className="max-h-48 overflow-y-auto space-y-1">
-              {filteredDistricts.map((district, index) => (
-                <button
-                  key={index}
-                  type="button"
-                  onClick={() => handleLocationSelect(district)}
-                  className={`w-full text-left p-2 rounded hover:bg-neutral-100 transition-colors ${
-                    selectedLocation === district.name
-                      ? "bg-green-50 border border-green-200"
-                      : ""
-                  }`}
-                >
-                  <div className="flex items-center gap-2">
-                    <MapPin className="w-4 h-4 text-green-600" />
-                    <span className="text-sm">{district.name}</span>
-                  </div>
-                </button>
-              ))}
-              {filteredDistricts.length === 0 && searchTerm && (
-                <p className="text-sm text-neutral-500 text-center py-4">
-                  "{searchTerm}" илэрц олдсонгүй
-                </p>
-              )}
-            </div>
-
-            <div className="mt-3 p-3 bg-neutral-50 rounded text-xs text-neutral-600">
-              💡 Зөвлөгөө: Дээрх жагсаалтаас сонгох эсвэл шууд бичиж оруулах
-              боломжтой
             </div>
           </div>
         )}

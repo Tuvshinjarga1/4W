@@ -1,7 +1,10 @@
+"use client";
+
 import Link from "next/link";
 import Image from "next/image";
-import { MapPin, Calendar } from "lucide-react";
+import { MapPin, Calendar, Navigation } from "lucide-react";
 import { Badge } from "@/components/ui/badge";
+import { Button } from "@/components/ui/button";
 import type { Product } from "@/lib/types";
 import UrgencyIndicator from "./UrgencyIndicator";
 
@@ -10,6 +13,23 @@ interface ProductCardProps {
 }
 
 export default function ProductCard({ product }: ProductCardProps) {
+  const handleNavigateToLocation = (e: React.MouseEvent) => {
+    e.preventDefault();
+    e.stopPropagation();
+
+    // Хэрэв бүтээгдэхүүнд координат байвал түүнийг ашиглах
+    if (product.coordinates) {
+      const { lat, lng } = product.coordinates;
+      const url = `https://www.google.com/maps?q=${lat},${lng}`;
+      window.open(url, "_blank");
+    } else {
+      // Хэрэв координат байхгүй бол байршлын нэрээр хайх
+      const searchQuery = encodeURIComponent(product.location);
+      const url = `https://www.google.com/maps/search/${searchQuery}`;
+      window.open(url, "_blank");
+    }
+  };
+
   return (
     <Link href={`/product/${product.id}`}>
       <div className="bg-white rounded-lg shadow-sm hover:shadow-md transition-shadow overflow-hidden">
@@ -41,9 +61,21 @@ export default function ProductCard({ product }: ProductCardProps) {
           </p>
 
           <div className="space-y-1 mb-3">
-            <div className="flex items-center gap-1 text-xs text-neutral-600">
-              <MapPin className="w-3 h-3 text-green-600" />
-              <span>{product.location}</span>
+            <div className="flex items-center justify-between">
+              <div className="flex items-center gap-1 text-xs text-neutral-600">
+                <MapPin className="w-3 h-3 text-green-600" />
+                <span>{product.location}</span>
+              </div>
+              <Button
+                type="button"
+                variant="ghost"
+                size="sm"
+                onClick={handleNavigateToLocation}
+                className="h-6 px-2 text-xs text-green-600 hover:text-green-700 hover:bg-green-50"
+              >
+                <Navigation className="w-3 h-3 mr-1" />
+                Зам
+              </Button>
             </div>
             <div className="flex items-center gap-1 text-xs text-neutral-600">
               <Calendar className="w-3 h-3 text-green-600" />
