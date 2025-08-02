@@ -11,10 +11,10 @@ export default function AddProductPage() {
           <div className="max-w-md mx-auto">
             <div className="mb-6">
               <h1 className="text-2xl font-bold text-neutral-800 mb-2">
-                Add New Product
+                Шинэ бүтээгдэхүүн нэмэх
               </h1>
               <p className="text-neutral-600 text-sm">
-                Share your surplus food with the community
+                Илүүдэл хүнсээ олон нийттэй хуваалцаарай
               </p>
             </div>
 

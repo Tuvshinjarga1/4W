@@ -7,10 +7,11 @@ import { Providers } from "@/components/providers";
 const inter = Inter({ subsets: ["latin"] });
 
 export const metadata: Metadata = {
-  title: "FoodShare - Reduce Food Waste Together",
+  title: "ХүнсХуваалцах - Хамтдаа хүнсний хог хаягдлыг бууруулах",
   description:
-    "A community platform for sharing food and reducing waste, promoting sustainable consumption aligned with UN SDGs",
-  keywords: "food sharing, sustainability, reduce waste, community, UN SDGs",
+    "НҮБ-ын тогтвортой хөгжлийн зорилгод нийцүүлэн хүнс хуваалцах, хог хаягдлыг бууруулах олон нийтийн платформ",
+  keywords:
+    "хүнс хуваалцах, тогтвортой байдал, хог хаягдал бууруулах, олон нийт, НҮБ-ын ТХЗ",
   generator: "4W",
 };
 
@@ -20,7 +21,7 @@ export default function RootLayout({
   children: React.ReactNode;
 }) {
   return (
-    <html lang="en">
+    <html lang="mn">
       <body className={`${inter.className} bg-neutral-50`}>
         <Providers>{children}</Providers>
       </body>

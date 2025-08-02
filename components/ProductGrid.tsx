@@ -1,8 +1,8 @@
-import ProductCard from "./ProductCard"
-import type { Product } from "@/lib/types"
+import ProductCard from "./ProductCard";
+import { Product } from "@/lib/types";
 
 interface ProductGridProps {
-  products: Product[]
+  products: Product[];
 }
 
 export default function ProductGrid({ products }: ProductGridProps) {
@@ -12,10 +12,14 @@ export default function ProductGrid({ products }: ProductGridProps) {
         <div className="w-16 h-16 bg-neutral-200 rounded-full flex items-center justify-center mx-auto mb-4">
           <span className="text-2xl">📦</span>
         </div>
-        <h3 className="text-lg font-medium text-neutral-800 mb-2">No products available</h3>
-        <p className="text-neutral-600 text-sm">Be the first to share food in your community!</p>
+        <h3 className="text-lg font-medium text-neutral-800 mb-2">
+          Бүтээгдэхүүн байхгүй байна
+        </h3>
+        <p className="text-neutral-600 text-sm">
+          Танай орон нутагт анхны хүнс хуваалцагч болоорой!
+        </p>
       </div>
-    )
+    );
   }
 
   return (
@@ -24,5 +28,5 @@ export default function ProductGrid({ products }: ProductGridProps) {
         <ProductCard key={product.id} product={product} />
       ))}
     </div>
-  )
+  );
 }

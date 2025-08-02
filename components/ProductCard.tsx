@@ -1,12 +1,12 @@
-import Link from "next/link"
-import Image from "next/image"
-import { MapPin, Calendar } from "lucide-react"
-import { Badge } from "@/components/ui/badge"
-import type { Product } from "@/lib/types"
-import UrgencyIndicator from "./UrgencyIndicator"
+import Link from "next/link";
+import Image from "next/image";
+import { MapPin, Calendar } from "lucide-react";
+import { Badge } from "@/components/ui/badge";
+import type { Product } from "@/lib/types";
+import UrgencyIndicator from "./UrgencyIndicator";
 
 interface ProductCardProps {
-  product: Product
+  product: Product;
 }
 
 export default function ProductCard({ product }: ProductCardProps) {
@@ -22,16 +22,23 @@ export default function ProductCard({ product }: ProductCardProps) {
             className="w-full h-48 object-cover"
           />
           <div className="absolute top-2 left-2">
-            <Badge variant="secondary" className="bg-white/90 text-neutral-800 text-xs">
+            <Badge
+              variant="secondary"
+              className="bg-white/90 text-neutral-800 text-xs"
+            >
               {product.category}
             </Badge>
           </div>
         </div>
 
         <div className="p-4">
-          <h3 className="font-semibold text-neutral-800 mb-2 line-clamp-1">{product.title}</h3>
+          <h3 className="font-semibold text-neutral-800 mb-2 line-clamp-1">
+            {product.title}
+          </h3>
 
-          <p className="text-sm text-neutral-600 mb-3 line-clamp-2">{product.description}</p>
+          <p className="text-sm text-neutral-600 mb-3 line-clamp-2">
+            {product.description}
+          </p>
 
           <div className="space-y-1 mb-3">
             <div className="flex items-center gap-1 text-xs text-neutral-600">
@@ -40,7 +47,10 @@ export default function ProductCard({ product }: ProductCardProps) {
             </div>
             <div className="flex items-center gap-1 text-xs text-neutral-600">
               <Calendar className="w-3 h-3 text-green-600" />
-              <span>Expires: {new Date(product.expiryDate).toLocaleDateString()}</span>
+              <span>
+                Дуусах огноо:{" "}
+                {new Date(product.expiryDate).toLocaleDateString()}
+              </span>
             </div>
           </div>
 
@@ -49,12 +59,16 @@ export default function ProductCard({ product }: ProductCardProps) {
               <div className="w-6 h-6 bg-green-100 rounded-full flex items-center justify-center">
                 <span className="text-xs">🧑‍💼</span>
               </div>
-              <span className="text-xs text-neutral-600">{product.seller?.name ?? "Unknown Seller"}</span>
+              <span className="text-xs text-neutral-600">
+                {product.seller?.name ?? "Тодорхойгүй борлуулагч"}
+              </span>
             </div>
-            <span className="text-sm font-medium text-neutral-800">Qty: {product.quantity}</span>
+            <span className="text-sm font-medium text-neutral-800">
+              Тоо: {product.quantity}
+            </span>
           </div>
         </div>
       </div>
     </Link>
-  )
+  );
 }

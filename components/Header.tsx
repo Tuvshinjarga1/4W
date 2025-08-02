@@ -57,9 +57,9 @@ export default function Header() {
           <div className="flex items-center justify-between">
             <Link href="/" className="flex items-center gap-2">
               <div className="w-8 h-8 bg-green-600 rounded-lg flex items-center justify-center">
-                <span className="text-white font-bold text-sm">FS</span>
+                <span className="text-white font-bold text-sm">ХХ</span>
               </div>
-              <span className="font-bold text-neutral-800">FoodShare</span>
+              <span className="font-bold text-neutral-800">ХүнсХуваалцах</span>
             </Link>
 
             <div className="flex items-center gap-4">
@@ -90,19 +90,6 @@ export default function Header() {
                         }
                       >
                         <Plus className="w-4 h-4" />
-                      </Button>
-                    </Link>
-                    <Link href="/inbox">
-                      <Button
-                        variant={pathname === "/inbox" ? "default" : "ghost"}
-                        size="sm"
-                        className={
-                          pathname === "/inbox"
-                            ? "bg-green-600 hover:bg-green-700"
-                            : ""
-                        }
-                      >
-                        <MessageSquare className="w-4 h-4" />
                       </Button>
                     </Link>
                   </>
