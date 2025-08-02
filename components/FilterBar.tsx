@@ -22,14 +22,7 @@ export default function FilterBar() {
     lng: number;
   } | null>(null);
 
-  const categories = [
-    "Жимс",
-    "Ногоо",
-    "Сүүн бүтээгдэхүүн",
-    "Талх",
-    "Мах",
-    "Бусад",
-  ];
+  const categories = ["Жимс", "Ногоо", "Сүүн бүтээгдэхүүн", "Мах", "Бусад"];
   const urgencyLevels = [
     "Өнөөдөр дуусна",
     "1-3 хоногт дуусна",
