@@ -11,7 +11,7 @@ const firebaseConfig = {
   storageBucket: "hackaton-gdg.firebasestorage.app",
   messagingSenderId: "604893337422",
   appId: "1:604893337422:web:8846954ba358042b56f01f",
-  measurementId: "G-E68DWBRC1Q",
+  measurementId: "G-E68DWBRC1Q"
 };
 const app = initializeApp(firebaseConfig);
 

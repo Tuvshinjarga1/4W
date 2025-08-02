@@ -13,8 +13,10 @@ interface ChatPageProps {
 }
 
 export default async function ChatPage({ params }: ChatPageProps) {
-  const product = await getProductById(params.productId);
-
+  const resolvedParams = await params;
+  const product = await getProductById(resolvedParams.productId);
+console.log("Resolved Params:", resolvedParams);
+console.log("product Params:", product);
   if (!product) {
     notFound();
   }
@@ -24,17 +26,17 @@ export default async function ChatPage({ params }: ChatPageProps) {
       <div className="min-h-screen bg-neutral-50 flex flex-col">
         <header className="bg-white border-b border-neutral-200 sticky top-0 z-10">
           <div className="container mx-auto px-4 py-3 flex items-center gap-3">
-            <Link href={`/product/${params.productId}`}>
+            <Link href={`/product/${resolvedParams.productId ?? ""}`}>
               <Button variant="ghost" size="sm">
                 <ArrowLeft className="w-4 h-4" />
               </Button>
             </Link>
             <div className="flex-1">
               <h1 className="font-semibold text-neutral-800">
-                {product.title}
+                {typeof product.title === "string" ? product.title.replace(/^"+|"+$/g, "") : ""}
               </h1>
               <p className="text-sm text-neutral-600">
-                Chat with {product.seller.name}
+                Chat with {product.seller?.name ?? "Seller"}
               </p>
             </div>
           </div>

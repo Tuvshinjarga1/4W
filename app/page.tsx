@@ -5,8 +5,15 @@ import FilterBar from "@/components/FilterBar"
 import { getProducts } from "@/lib/data"
 
 export default async function HomePage() {
-  const products = await getProducts()
+  const rawProducts = await getProducts()
 
+  const products = rawProducts.map((product: any) => ({
+    ...product,
+    seller: product["seller "] ?? product.seller,
+    expiryDate: new Date(product.expiryDate?.seconds * 1000),
+    title: product.title?.replace(/^"|"$/g, "").trim(),
+  }))
+console.log("Products:", products)
   return (
     <div className="min-h-screen bg-neutral-50">
       <Header />

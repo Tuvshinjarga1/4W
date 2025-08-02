@@ -1,28 +1,28 @@
+export interface Seller {
+  id: string
+  name: string
+}
+
 export interface Product {
   id: string
   title: string
   description: string
-  category: string
-  quantity: string
-  expiryDate: string
-  location: string
   image: string
-  seller: {
-    id: string
-    name: string
-  }
-}
-
-export interface User {
-  id: string
-  name: string
-  role: "buyer" | "seller"
+  location: string
+  quantity: string
+  category: string
+  expiryDate: Date
+  seller: Seller
 }
 
 export interface ChatMessage {
-  id: string
+  id?: string
   productId: string
   senderId: string
   text: string
   timestamp: Date
+}
+
+export interface ProductWithChat extends Product {
+  chat?: ChatMessage | null
 }

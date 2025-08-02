@@ -21,9 +21,6 @@ export default function ProductCard({ product }: ProductCardProps) {
             height={200}
             className="w-full h-48 object-cover"
           />
-          <div className="absolute top-2 right-2">
-            <UrgencyIndicator expiryDate={product.expiryDate} />
-          </div>
           <div className="absolute top-2 left-2">
             <Badge variant="secondary" className="bg-white/90 text-neutral-800 text-xs">
               {product.category}
@@ -52,7 +49,7 @@ export default function ProductCard({ product }: ProductCardProps) {
               <div className="w-6 h-6 bg-green-100 rounded-full flex items-center justify-center">
                 <span className="text-xs">🧑‍💼</span>
               </div>
-              <span className="text-xs text-neutral-600">{product.seller.name}</span>
+              <span className="text-xs text-neutral-600">{product.seller?.name ?? "Unknown Seller"}</span>
             </div>
             <span className="text-sm font-medium text-neutral-800">Qty: {product.quantity}</span>
           </div>
